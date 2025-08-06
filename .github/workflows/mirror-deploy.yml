@@ -3,40 +3,40 @@
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install requests beautifulsoup4
+    - name: Install dependencies
+      run: python -m pip install --upgrade requests beautifulsoup4
 
-      - name: Run Black Vertex mirror script
-        env:
-          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
-          GOOGLE_INDEX_TOKEN: ${{ secrets.GOOGLE_INDEX_TOKEN }}
-        run: python black_vertex.py
+    - name: Run Black Vertex script
+      run: |
+        python black_vertex.py
+        echo "::group::Mirrored URLs"
+        type mirrors\index.html
+        echo "::endgroup::"
 
-      - name: Deploy mirrors to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./mirrors
+    - name: Commit changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add mirrors
+        git commit -m "🔁 Update mirrors $(Get-Date -Format yyyy-MM-dd_HH-mm)" || echo "No changes to commit"
 
-      - name: List live mirror URLs
-        run: |
-          echo "Live mirror URLs (deployed):"
-          for d in mirrors/*/ ; do
-            slug=$(basename "$d")
-            echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${slug}/"
-          done
+    - name: Push to gh-pages via subtree
+      env:
+        PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+      run: |
+        git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_TOKEN }}@github.com/${{ github.repository }}
+        git subtree push --prefix mirrors origin gh-pages
