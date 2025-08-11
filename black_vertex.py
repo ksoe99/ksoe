@@ -226,7 +226,7 @@ def process_url(url, mirror_urls):
         mutated = mutate_content(html1, i)
         final = rewrite_html(mutated, url, i)
         save_mirror(slug, final)
-        mirror_url = f"{MIRROR_DOMAIN}/{MIRROR_DIR}/{slug}/"
+        mirror_url = f"{MIRROR_DOMAIN}/{slug}/"
         if random.random() < 0.4:
             ping_indexing(mirror_url)
         mirror_urls.append(mirror_url)
