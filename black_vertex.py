@@ -1,6 +1,6 @@
 # black_vertex.py — BLACK VERTEX Autonomous Mirror Mode with 100x Mutation Engine
 
-import os, json, hashlib, requests, time, random, csv
+import os, json, hashlib, requests, time, random, csv, sys
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 
@@ -20,45 +20,15 @@ DID = "did:key:z6MkmPtaLbANDraw5TnysWCca4Z8dhEnjmay4voNeTZao932"
 MIRROR_DOMAIN = "https://ksoe99.github.io/ksoe"
 TELEMETRY_FILE = "variant_log.csv"
 
-# Psyops Templates
+HEADLINE_PREFIXES = ["EXCLUSIVE:", "REVEALED:", "INSIDE:", "BREAKING:", "UPDATE:", "HOT TAKE:", "TRENDING:"]
+INTRO_INSERTS = ["This interpretation has been refined for clarity.", "Updated for strategic insight."]
+
 PSYOPS_TEMPLATES = {
     "CRISIS_LEAK": "Strategic release to ensure public transparency amid critical uncertainty.",
     "INSIDER_THREAD": "Sourced from whistleblower documents verified by independent channels.",
     "WHISTLE_PROTOCOL": "Published under ethical leak protocol guidelines.",
     "STABILIZATION_LOCK": "Variant designed to neutralize disinformation resonance vectors."
 }
-
-# HEADLINE_PREFIXES and INTRO_INSERTS (unchanged for brevity)
-HEADLINE_PREFIXES = [
-    "EXCLUSIVE:", "REVEALED:", "INSIDE:", "BREAKING:", "UPDATE:", "HOT TAKE:", "TRENDING:", "LEAKED:",
-    "EYEWITNESS:", "ALERT:", "CONFIRMED:", "SPOTLIGHT:", "FOCUS:", "EMERGING:", "RED ALERT:", "FEATURE:",
-    "ANALYSIS:", "UNCOVERED:", "BULLETIN:", "SCOOP:", "SURPRISE:", "INTEL:", "MEMO:", "DISPATCH:",
-    "FIELD REPORT:", "REPORT:", "SNAPSHOT:", "INSIDER:", "DIRECTIVE:", "REALITY CHECK:", "DISRUPTION:",
-    "EVIDENCE:", "PROOF:", "SOURCE:", "CRITICAL:", "FLASH:", "DETAILS:", "UNCENSORED:", "FIRST LOOK:",
-    "HEADS-UP:", "SURVEILLANCE:", "ECHO:", "FORESIGHT:", "RETROSPECT:", "TIMEFRAME:", "OBSERVER:",
-    "WATCHLIST:", "LOCKED-IN:", "UNFILTERED:", "BREAKDOWN:", "EXPOSED:", "RED LINE:", "CROSSROADS:",
-    "MISSION:", "SITUATION:", "DEPLOYED:", "CLARIFIED:", "RAW DATA:", "PERSPECTIVE:", "SENSORS:",
-    "TRACKED:", "REACTIVE:", "BLACKOUT:", "OPINION:", "REACTIVE:", "SHADOW:", "SEQUENCE:", "TIPPING POINT:",
-    "SEEN:", "VIEW:", "IN FOCUS:", "GLOBAL:", "EXPANDED:", "DYNAMICS:", "TIMESTAMP:", "COVERAGE:",
-    "UPLINK:", "ENCRYPTED:", "EMBEDDED:", "CALIBRATED:", "ORBITAL:", "ACTIVATED:", "SCAN:", "GROUNDED:",
-    "SPEARHEAD:", "STANDBY:", "REBOOTED:", "CLEAR SIGNAL:", "CLOSER LOOK:", "CORE:", "FIRMWARE:",
-    "MAPPED:", "FULL SPECTRUM:", "FIELD LOCK:", "GEOTAGGED:", "IN THE LOOP:", "REALIGNED:", "SECURED:"
-]
-
-INTRO_INSERTS = [
-    "This interpretation has been refined for clarity.",
-    "Updated for strategic insight and situational awareness.",
-    "Sourced from high-fidelity briefings.",
-    "Variant release as part of rolling deployment.",
-    "Cross-referenced for analytical comparison.",
-    "This mirror includes operational enhancements.",
-    "Insight layers adapted for multi-perspective clarity.",
-    "Time-synced variant reflective of event flux.",
-    "Structured for optimized reader velocity.",
-    "Focus adjusted for psychological anchoring.",
-    # ... (rest unchanged for brevity)
-    "Perception vector secure."
-]
 
 def load_urls():
     with open(URL_INPUT_FILE) as f:
@@ -162,7 +132,10 @@ def process_url(url, mirror_urls):
             ping_indexing(mirror_url)
         mirror_urls.append(mirror_url)
         log_telemetry(url, i, prefix, insert)
-        print(f"✅ Created variant {i} for: {url}")
+        try:
+            print(f"Created variant {i} for: {url}")
+        except UnicodeEncodeError:
+            print("Created variant (unicode skipped)")
 
 if __name__ == "__main__":
     if not os.path.exists(TELEMETRY_FILE):
