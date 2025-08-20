@@ -4,35 +4,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-blackvertex:
+  build:
     runs-on: windows-latest
 
     steps:
-      - name: ⬇️ Checkout Repo
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: 📦 Set Up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: 3.11
 
-      - name: 📂 Install Dependencies
+      - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install beautifulsoup4 requests python-dotenv
+          python -m pip install --upgrade pip
+          pip install -r BlackVertex/requirements.txt
 
-      - name: 🧠 Run BLACK VERTEX
+      - name: Run BLACK VERTEX
         run: |
-        cd "${{ github.workspace }}\BlackVertex"
+          cd "${{ github.workspace }}/BlackVertex"
           python black_vertex.py
 
-      - name: 🛰 Upload Logs
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Upload Logs
+        uses: actions/upload-artifact@v3
         with:
-          name: blackvertex-output
-          path: |
-            BlackVertex/variant_log.csv
-            BlackVertex/run.log
-            BlackVertex/mirrors_created_resolved.txt
-
+          name: mirror-logs
+          path: BlackVertex/variant_log.csv
