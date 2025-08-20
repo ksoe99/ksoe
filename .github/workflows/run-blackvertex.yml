@@ -26,8 +26,9 @@ jobs:
           cd "${{ github.workspace }}/BlackVertex"
           python black_vertex.py
 
-      - name: Upload Logs
-        uses: actions/upload-artifact@v3
-        with:
-          name: mirror-logs
-          path: BlackVertex/variant_log.csv
+- name: Upload Logs
+  uses: actions/upload-artifact@v4
+  with:
+    name: mirror-logs
+    path: BlackVertex/variant_log.csv
+
