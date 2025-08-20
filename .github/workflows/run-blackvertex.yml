@@ -23,7 +23,7 @@ jobs:
 
       - name: 🧠 Run BLACK VERTEX
         run: |
-         cd "${{ github.workspace }}\ksoe\BlackVertex"
+        cd "${{ github.workspace }}\BlackVertex"
           python black_vertex.py
 
       - name: 🛰 Upload Logs
