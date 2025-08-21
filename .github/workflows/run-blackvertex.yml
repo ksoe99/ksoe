@@ -1,4 +1,4 @@
-name: BLACK VERTEX Deployment
+name: 🕸️ Build & Deploy Black Vertex Mirrors
 
 on:
   workflow_dispatch:
@@ -8,27 +8,30 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r BlackVertex/requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install beautifulsoup4 python-dotenv
 
-      - name: Run BLACK VERTEX
-        run: |
-          cd "${{ github.workspace }}/BlackVertex"
-          python black_vertex.py
+    - name: Run BLACK VERTEX
+      shell: pwsh
+      run: |
+        & "$env:USERPROFILE\AppData\Local\Programs\Python\Python312\python.exe" black_vertex.py
 
-- name: Upload Logs
-  uses: actions/upload-artifact@v4
-  with:
-    name: mirror-logs
-    path: BlackVertex/variant_log.csv
-
+    - name: Upload Mutation Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: mutation-logs
+        path: |
+          variant_log.csv
+          mirrors/
